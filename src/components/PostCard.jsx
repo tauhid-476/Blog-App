@@ -15,9 +15,8 @@ function PostCard({$id, title, featuredImage}) {
               is the id of the image
             
             */}
-            <img src={`${appwriteService.getFilePreview(featuredImage)}`} alt={title}
-            className='rounded-xl'
-            />
+            <img src={appwriteService.getFilePreview(featuredImage)} alt={title}
+                className='rounded-xl' />
 
          </div>
          <h2
