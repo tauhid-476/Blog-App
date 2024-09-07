@@ -5,21 +5,23 @@ import { Button, Input, Logo } from './index'
 import { useDispatch } from 'react-redux'
 import authService from "../appwrite/auth"
 import { useForm } from 'react-hook-form'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
 
 
 function Login() {
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const {register, handleSubmit} = useForm()
+  const { register, handleSubmit } = useForm()
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
 
-  const login = async (data) => { 
+  const login = async (data) => {
     setError("")
 
     try {
-
+      setLoading(true)
       const session = await authService.login(data)//awppwrite wala login
       if (session) {
 
@@ -34,6 +36,8 @@ function Login() {
 
       setError(error.message)
 
+    } finally {
+      setLoading(false)
     }
 
   }
@@ -54,53 +58,62 @@ function Login() {
           Don&apos;t have any account?&nbsp;
           <Link
             to="/signup"
-            className="font-medium text-primary transition-all duration-200 hover:underline"
+            className="font-medium text-base-200 transition-all duration-200 hover:underline"
           >
             Sign Up
           </Link>
         </p>
         {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
-       
-       {/* on submit always handleSubmit(the method u created (here login)) */}
+
+        {/* on submit always handleSubmit(the method u created (here login)) */}
 
         <form onSubmit={handleSubmit(login)} className='mt-8'>
 
           <div className='space-y-5'>
             <Input
-            label = "Email :"
-            placeholder = "Enter your email"
-            type = "email"
-            // this is an extra thing and its syntax ...(triple dot) is very important the name inside it should be unique. Also pass options in form of object.Its optional u can or can  not 
+              label="Email :"
+              placeholder="Enter your email"
+              type="email"
+              // this is an extra thing and its syntax ...(triple dot) is very important the name inside it should be unique. Also pass options in form of object.Its optional u can or can  not 
 
-            //regexp.test(value) || 
-            //from docs
-            {...register("email",{
-              required: true,
-              validate: {
-                matchPatern: (value)=>/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
-                        "Email address must be a valid address", 
-              }
-            })}
+              //regexp.test(value) || 
+              //from docs
+              {...register("email", {
+                required: true,
+                validate: {
+                  matchPatern: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+                    "Email address must be a valid address",
+                }
+              })}
             />
-            <Input 
-              label = "Password: "
-              type = "password"
-              placeholder = "Enter your passsword"
-              {...register("password",{
-                  required: true,               
+            <Input
+              label="Password: "
+              type="password"
+              placeholder="Enter your passsword"
+              {...register("password", {
+                required: true,
               })}
             />
             {/* In React, there is a difference between the self-closing tag <Button /> and the non-self-closing tag <Button></Button> */}
             {/* Self-Closing Tag: <Button />
             Usage: This syntax is used when the component does not contain any childre  */}
-             {/* Non-Self-Closing Tag: <Button></Button>
+            {/* Non-Self-Closing Tag: <Button></Button>
              Usage: This syntax is used when you need to include children within the component. */}
 
-             <Button
-             type = "submit"
-             className = "w-full"
-             >Sign In</Button>
- 
+            <Button
+              type="submit"
+              className="w-full flex justify-center items-center"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? (
+
+                <ArrowPathIcon className="h-5 w-5 animate-spin mr-2 text-gray-400" />
+
+
+              ) : null}
+             Sign In
+            </Button>
+
           </div>
         </form>
       </div>

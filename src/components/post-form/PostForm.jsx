@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 export default function PostForm({ post }) {
-  //extra features of useForm
+
   const { register, handleSubmit, watch, setValue,
     control, getValues } = useForm({
       defaultValues: {
@@ -28,7 +28,7 @@ export default function PostForm({ post }) {
   //if not=> create a new post
 
   const submit = async (data) => {
-    //in react hook form  we can create forms which accept datas. It gives a ccess to images
+    //in react hook form  we can create forms which accept datas. It gives access to images
     if (post) {
       const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
 
@@ -96,17 +96,19 @@ export default function PostForm({ post }) {
 
   return (
     <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-      <div className="w-2/3 px-2">
+      <div className="w-full lg:w-2/3 px-2 mb-4">
         <Input
           label="Title :"
           placeholder="Title"
-          className="mb-4"
+          className="mb-4 text-base-100"
           {...register("title", { required: true })}
         />
         <Input
           label="Slug :"
           placeholder="Slug"
+          disabled
           className="mb-4"
+          
           {...register("slug", { required: true })}
           onInput={(e) => {
             setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
@@ -114,34 +116,37 @@ export default function PostForm({ post }) {
         />
         <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
       </div>
-      <div className="w-1/3 px-2">
+      <div className="w-full lg:w-1/3 px-2 mb-4">
         <Input
           label="Featured Image :"
           type="file"
           className="mb-4"
           accept="image/png, image/jpg, image/jpeg, image/gif"
           {...register("image", { required: !post })}
+          style={{ width: '100%' }}
         />
         {post && (
           <div className="w-full mb-4">
             <img
               src={appwriteService.getFilePreview(post.featuredImage)}
               alt={post.title}
-              className="rounded-lg"
+              className="rounded-lg w-full"
             />
           </div>
         )}
-         <Select
-                    options={["active", "inactive"]}
-                    label="Status"
-                    className="mb-4"
-                    {...register("status", { required: true })}
-                />
+        <Select
+          options={["active", "inactive"]}
+          label="Status"
+          className="mb-4"
+          {...register("status", { required: true })}
+          style={{ width: '100%' }}
+        />
         <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
           {post ? "Update" : "Submit"}
         </Button>
       </div>
     </form>
   );
+  
 
 }

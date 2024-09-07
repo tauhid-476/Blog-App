@@ -6,7 +6,7 @@ import { Controller } from 'react-hook-form'
 //conrtrol will pass on the control from this component to jo bhi isko call karega
 export default function RTE({ name, control, label, defaultValue = "" }) {
   return (
-    <div className='w-full'>
+    <div className='w-full text-base-100 font-bold'>
       {label && <label className='inline-block mb-1 pl-1 '>
         {label}</label>}
 

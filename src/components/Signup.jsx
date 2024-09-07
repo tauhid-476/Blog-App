@@ -5,17 +5,19 @@ import { login } from '../store/authSlice'
 import { Button, Input, Logo } from './index'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
 
 function Signup() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [error, setError] = useState("")
+  const[loading, setLoading] = useState(false)
   const { register, handleSubmit } = useForm()
 
   const create = async (data) => {
     setError("")
     try {
-
+       setLoading(true)
       const userData = await authService.createAccount(data)
 
       if (userData) {
@@ -27,6 +29,8 @@ function Signup() {
 
     } catch (error) {
       setError(error.message)
+    }finally{
+      setLoading(false)
     }
   }
 
@@ -43,7 +47,7 @@ function Signup() {
           Already have an account?&nbsp;
           <Link
             to="/login"
-            className="font-medium text-primary transition-all duration-200 hover:underline"
+            className="font-medium transition-all duration-200 hover:underline text-base-200"
           >
             Sign In
           </Link>
@@ -80,10 +84,19 @@ function Signup() {
                 required: true,
               })}
             />
-            <Button
+             <Button
               type="submit"
-              className="w-full"
-            >Create Account</Button>
+              className="w-full flex justify-center items-center"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? (
+              
+                <ArrowPathIcon className="h-5 w-5 animate-spin mr-2 text-gray-400" /> 
+                
+                
+              ) : null}
+              Create Account
+            </Button>
           </div>
         </form>
       </div>
