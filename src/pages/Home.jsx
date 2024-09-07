@@ -3,18 +3,33 @@ import appwriteService from "../appwrite/config";
 import { Container, PostCard } from '../components';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
+import authService from '../appwrite/auth';
 
 function Home() {
   const [posts, setPosts] = useState([]);
+  const[username, setUsername] = useState('');
+
+
 
   useEffect(() => {
-    appwriteService.getPosts().then((posts) => {
-      if (posts) {
-        setPosts(posts.documents.slice(0, 4));
-
+    const fetchPosts = async () => {
+      const posts = await appwriteService.getPosts();
+      setPosts(posts.documents.slice(0, 4));
+    };
+    const fetchUser = async () => {
+      try {
+        const user = await authService.getCurrentUser(); 
+        if (user) {
+          setUsername(user.name || ''); 
+        }
+      } catch (error) {
+        console.error("Failed to fetch user", error);
       }
-    });
+    };
+    fetchPosts();
+    fetchUser();
   }, []);
+   
 
   if (posts.length === 0) {
     return (
@@ -22,7 +37,7 @@ function Home() {
         <Container>
           <div className="flex flex-wrap justify-center">
             <div className="p-2 w-full">
-              <h1 className="text-2xl font-bold hover:text-gray-500">
+              <h1 className="text-2xl font-bold text-base-200 hover:text-gray-500">
                 Login to read posts
               </h1>
             </div>
@@ -35,7 +50,7 @@ function Home() {
   return (
     <div className='w-full py-8'>
       <Container>
-      <p className='text-3xl font-bold text-base-100 p-4 pt-0'>Hello and welcome to Write Space</p>
+      <p className='text-3xl font-bold text-base-100 p-4 pt-0'>Hello {username ? `${username}`: 'there '}and welcome to Write Space</p>
       <p className='text-2xl text-base-100 pl-4 pb-4'>Read the most recent blogs here.</p>
         <div className='flex flex-wrap justify-center md:justify-start items-center'>
           {posts.map((post) => (
